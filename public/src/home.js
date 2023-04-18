@@ -39,26 +39,29 @@ function getMostPopularBooks(books) {
     name: book.title,
     count: book.borrows.length,
   }));
-  popularBooks.sort((a,b) => b.count - a.count);
+  popularBooks.sort((ai,bi) => bi.count - ai.count);
   return popularBooks.slice(0,5);
 }
 
 function getMostPopularAuthors(books, authors) {
   const authorBorrows = {};
   books.forEach((book) => {
-    const author = authors.find((author) => author.id === book.authorId);
-    if (!authorBorrows[author.id]) {
-      authorBorrows[author.id] = {
-        name : `${author.name.first} ${author.name.last}`,
+    const authorName = getAuthorName(authors, book.authorId);
+    if (!authorBorrows[book.authorId]) {
+      authorBorrows[book.authorId] = {
+        name : authorName,
         count : 0,
       };
     }
-    authorBorrows[author.id].count += book.borrows.length;
+    authorBorrows[book.authorId].count += book.borrows.length;
   });
-const sortedAuthors = Object.values(authorBorrows).sort((author1, author2) => author2.count - author1.count);
-return sortedAuthors.slice(0,5);
+  const sortedAuthors = Object.values(authorBorrows).sort((author1, author2) => author2.count - author1.count);
+  return sortedAuthors.slice(0,5);
 }
-
+function getAuthorName(authors, authorId) {
+  const author = authors.find((author) => author.id === authorId);
+  return `${author.name.first} ${author.name.last}`;
+}
 module.exports = {
   getTotalBooksCount,
   getTotalAccountsCount,
